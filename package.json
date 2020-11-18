@@ -15,11 +15,13 @@
     "idb-keyval": "^3.2.0",
     "openpgp": "^4.10.0",
     "peerjs": "^1.2.0",
-    "preact": "^10.3.2"
+    "preact": "^10.3.2",
+    "uuid": "^7.0.1"
   },
   "devDependencies": {
     "@types/openpgp": "^4.4.8",
     "@types/peerjs": "^1.1.0",
+    "@types/uuid": "^7.0.0",
     "parcel": "^1.12.4",
     "typescript": "^3.8.2"
   }

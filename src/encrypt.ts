@@ -1,5 +1,6 @@
 import * as openpgp from 'openpgp/dist/compat/openpgp'
 import { set, get } from 'idb-keyval'
+import { getMyUser } from './user'
 export interface Key {
     email: string
     privateKeyArmored: string
@@ -7,25 +8,25 @@ export interface Key {
     revocationCertificate: string
 }
 
-async function getKeys(email: string): Promise<Key> {
-    let key = await get<Key | undefined>(email)
-    if (key === undefined) {
-        const { privateKeyArmored, publicKeyArmored, revocationCertificate } = await openpgp.generateKey({
-            userIds: [{ name: 'Jon Smith', email: email }], // you can pass multiple user IDs
-            // rsaBits: 4096,                                              // RSA key size
-            // passphrase: 'super long and hard to guess secret'           // protects the private key
-        });
-        key = {
-            email: email,
-            privateKeyArmored: privateKeyArmored,
-            publicKeyArmored: publicKeyArmored,
-            revocationCertificate: revocationCertificate,
-        }
+// async function getKeys(email: string): Promise<Key> {
+//     let key = await get<Key | undefined>(await getID())
+//     if (key === undefined) {
+//         const { privateKeyArmored, publicKeyArmored, revocationCertificate } = await openpgp.generateKey({
+//             userIds: [{ name: 'Jon Smith', email: email }], // you can pass multiple user IDs
+//             // rsaBits: 4096,                                              // RSA key size
+//             // passphrase: 'super long and hard to guess secret'           // protects the private key
+//         });
+//         key = {
+//             email: email,
+//             privateKeyArmored: privateKeyArmored,
+//             publicKeyArmored: publicKeyArmored,
+//             revocationCertificate: revocationCertificate,
+//         }
 
-        await set(email, key)
-    }
-    return key
-}
+//         await set(email, key)
+//     }
+//     return key
+// }
 
 async function read(b: ReadableStream<Uint8Array> | Uint8Array): Promise<Uint8Array> {
     if (b instanceof Uint8Array) {
@@ -46,24 +47,24 @@ async function read(b: ReadableStream<Uint8Array> | Uint8Array): Promise<Uint8Ar
 }
 
 
-export async function encrypt(email: string, message: string): Promise<string> {
-    const key = await getKeys(email)
+export async function encrypt(message: string): Promise<string> {
+    const user = await getMyUser()
     const result = await openpgp.encrypt({
         message: openpgp.message.fromText(message), // input as Message object
         armor: false,                                      // don't ASCII armor (for Uint8Array output)
-        publicKeys: (await openpgp.key.readArmored(key.publicKeyArmored)).keys, // for encryption
+        publicKeys: (await openpgp.key.readArmored(user.publicKey)).keys, // for encryption
         // privateKeys: (await openpgp.key.readArmored(key.privateKeyArmored)).keys
     });
     return await toBase64(await read(result.message.packets.write())); // get raw encrypted packets as Uint8Array
 }
 export async function decrypt(email: string, encrypted: string): Promise<string> {
-    const key = await getKeys(email)
+    const user = await getMyUser()
 
     const result = await openpgp.decrypt({
         message: await openpgp.message.read(await fromBase64(encrypted)),
         format: 'utf8',
         // publicKeys: (await openpgp.key.readArmored(key.publicKeyArmored)).keys, // for encryption
-        privateKeys: (await openpgp.key.readArmored(key.privateKeyArmored)).keys
+        privateKeys: (await openpgp.key.readArmored(user.privateKey)).keys
     });
     return result.data as string
 }
