@@ -1,0 +1,31 @@
+{
+  "name": "crypto",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "watch": "webpack --watch",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zwzn/crypt0.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zwzn/crypt0/issues"
+  },
+  "homepage": "https://github.com/zwzn/crypt0#readme",
+  "devDependencies": {
+    "@types/crypto-js": "^4.0.1",
+    "@zwzn/build": "^1.1.2",
+    "typescript": "^4.1.2"
+  },
+  "dependencies": {
+    "@zwzn/spicy": "^1.0.1",
+    "crypto-js": "^4.0.0",
+    "preact": "^10.5.7"
+  }
+}
