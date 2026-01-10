@@ -22,7 +22,7 @@
     "@types/openpgp": "^4.4.8",
     "@types/peerjs": "^1.1.0",
     "@types/uuid": "^7.0.0",
-    "parcel": "^1.12.4",
+    "parcel": "^2.16.1",
     "typescript": "^3.8.2"
   }
 }
